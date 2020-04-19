@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	table{
+		border:2px solid black;
+		border-collapse: collapse;
+	}
+	td,th{
+	 	text-decoration:none;
+		border:2px solid black;
+		text-align:center;
+		padding:5px;
+	}
+	#a{
+		text-decoration:none; /* 去除a标签自带下划线   */
+        color:blue;
+        border:1px solid #999;
+        background-color: #F0F0F0;
+        text-align:center;
+
+                              /* 设置浮动 */
+        width:80px;
+        height:20px;
+
+	}
+</style>
+</head>
+<body>
+   <h1>体育管理系统</h1>
+   <div><a href="/page/add"  target="_self"  id="a">新增</a></div>
+   <div>
+   <table>
+		<tr>
+			<th>序号</th>
+			<th>活动类型</th>
+			<th>活动开始时间</th>
+			<th>活动结束时间</th>
+			<th>活动地点</th>
+			<th>活动人数</th>
+			<th>操作</th>
+		</tr>
+   </table>
+   </div>
+   <script src="jquery/jquery.min.js"></script>
+   <script>
+   $(function(){
+	   
+	   var url="/getAllDetails";
+
+	   $.get(url,function(result){		   
+		   doHandler(result);
+
+		   //删除和修改
+		   /* $('#operate').on('click', 'button#delrow', function () {
+			   deleteObject("122");
+	   }); */
+});
+	   
+
+   });
+   function doHandler(result){
+	   if(result.status==200){
+		   var data=result.data;
+		   if(data!=null&&data.length!=0){
+			   addTag(data)
+		   }
+	   }else{
+		   alert(result.msg);
+	   }
+	   //console.log(result);
+   }
+   
+   function addTag(data){
+	   var str=null;
+	   for(var i=0;i<data.length;i++){
+			   str+="<tr><td>"+data[i].id+"</td><td>"+data[i].item+"</td><td>"+data[i].startTime+"</td><td>"+data[i].endTime+"</td><td>"+data[i].site+"</td><td>"+data[i].peopleNumber+"</td><td><button id='operate' type='button' onclick='operateObject(this)'>"+data[i].operate+"</button></td></tr>";			   
+	   }
+		$("table").append(str);
+
+   }
+   
+   function operateObject($_this){
+	  var ope= $($_this).html();
+	  var del="删除";
+	  var update="修改";
+	  var arr=$($_this).parent().parent().children("td")[0];
+	  //console.log(arr);
+	  var p=$(arr).html();
+	  var para={};
+	  para['id']=p;
+	  //alert(para);
+	  if(ope==del){
+		  //alert(para);
+		  $.get("/judgeDeleteDetails",para,function(res){
+			  if(res.status==200){
+				  
+				   var t=res.data;
+				   //alert(t);
+				   if(t!=null){
+					   if(t==1){
+						   //活动已经结束
+						   if(window.confirm('你确定要取消交易吗？')){
+				                 //alert("确定");
+				                 //return true;
+				                 $.get("/confirmDeleteDetails",para,function(r){
+				                	 
+				                		 window.location.reload();//强制刷新
+				                	 //刷新当前页
+				                	 //获取浏览器访问栏里的地址
+				                	 //var url=document.location.href;
+				                	//判断地址后面是否多了某些值，没有就进方法里进行刷新 
+				                	        //if( url.indexOf("r=")==-1 ){    
+				                	   		//var t = new Date();
+				                	        //window.location.href = "<%=request.getContextPath()%>/url?r="+t.getTime();     
+				                	         //}
+				                 });
+				              }else{
+				                 //alert("取消");
+				                 return false;
+				             }
+						   }else{
+							   //活动正在进行中
+							   alert(res.msg);
+						   }
+					   }
+				   }
+		  })
+	  }else{
+		  //修改数据
+		  var u='/page/update/'+p;
+		  //alert(u);
+		  window.open(u,target="_self");
+		  //window.open('/graphReportController.do?list&id=dzdxz');
+		  //window.open('/webpage/com/nuist/singleStationInfo/stationInfoTab.jsp');
+
+	  }
+   }
+   </script>
+</body>
+</html>

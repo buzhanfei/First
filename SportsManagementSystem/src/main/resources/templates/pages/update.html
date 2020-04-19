@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	/* form{
+		border:2px solid black;
+		 margin-left: auto;
+		 margin-right: 77%; 
+	}	 */
+	table{
+		 margin-right:10%; 
+		 margin-left:10%;
+	}
+	
+	tr,td{
+		background:#5CADAD;
+		border:2px  black;
+	}
+</style>
+</head>
+<body>
+	<form action="/updateDetails">
+		<table>
+			<tr id="header">
+				<th colspan="3">修改</th>
+			</tr>
+			<tr>
+				<td>活动类型:</td>
+				<td>*</td>
+				<td>
+					<select name="item" th:field="${details.item}">
+						<option th:if="${details.item eq '羽毛球活动'}"  th:selected="selected" value="badminton">羽毛球活动</option>
+						<option th:if="${details.item eq '篮球活动'}"  th:selected="selected" value="basketball">篮球活动</option>
+						<option th:if="${details.item eq '乒乓球活动'}"  th:selected="selected"  value="pingPong">乒乓球活动</option>
+						<option th:if="${details.item eq '攀岩活动'}"  th:selected="selected"  value="rockClimbing">攀岩活动</option>
+						<option th:if="${details.item eq '游泳活动'}"  th:selected="selected"  value="swim">游泳活动</option>
+					</select> 
+				</td>
+			</tr>
+			<tr>
+				<td>活动开始时间:</td>
+				<td>*</td>
+				<td><input type="text"  name="user_date" th:value="${details.startTime}" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td>活动时长(小时):</td>
+				<td>*</td>
+				<td><input type="text" class="totalCnt" name="duration" th:value="${details.hour}"/></td>
+			</tr>
+			<tr>
+				<td>活动地点:</td>
+				<td>*</td>
+				<td><input type="text" id="notNull" required="required" name="site" th:value="${details.site}" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<td>活动人数:</td>
+				<td>*</td>
+				<td><input type="text" class="totalCnt" name="peopleNumber" th:value="${details.peopleNumber}"/></td>
+			</tr>
+			<tr>
+				<td>备注:</td>
+				<td></td>
+				<td><textarea rows="3" cols="20" name="description" th:text="${details.remark}" readonly="readonly"></textarea></td>				
+			</tr>
+			<tr>
+				<td style="visibility: hidden"><input type="hidden" name="id" th:value="${details.id}"/></td>				
+			</tr>
+			<tr> 				
+				<td colspan="3" style="text-align:center"><input type="submit" value="保存"/>
+				<input type="reset"/ value="取消"></td>
+	
+			</tr>
+		</table>
+	
+	
+	</form>
+	<script src="/jquery/jquery.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		//活动时长只能输入正整数
+		$(".totalCnt").change(function () {
+	        var totalCnt = $(".totalCnt").val();
+	        if (totalCnt != parseInt(totalCnt)){
+	            alert('请输入正确的正整数')
+	            $(".totalCnt").val("");
+	            return false;
+	        }
+	    });
+	    
+		//活动地点不能为null
+		$("#notNull").focus(function(){
+		}).blur(function(){
+			var val=$(this).val();
+			if(val==""){
+				alert("地点不能为空");
+			}
+		});
+	
+		//addData();
+	});
+	
+	
+	
+	</script>
+</body>
+</html>
